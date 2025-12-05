@@ -2,6 +2,9 @@ package main
 
 import (
 	client "YSKH_DMS/internal/controllers/client"
+	
+	routes "YSKH_DMS/internal/routes"
+	db "YSKH_DMS/database"
 	"fmt"
 	"time"
 )
@@ -12,6 +15,7 @@ import (
 // Với ví dụ đơn giản này, ta dùng đường dẫn module:
 // THAY THẾ 'scheduler_app' bằng tên module của bạn
 func main() {
+	db.InitDB()          // Kết nối DB
 	interval := 5 * time.Second
 
 	// ⭐️ Gọi StartScheduler và truyền 2 hàm:
@@ -21,6 +25,8 @@ func main() {
 	go client.StartScheduler(interval, client.CallAPI_Post, client.PostResultProcessor)
 
 	fmt.Println("Chương trình chính đã khởi động.")
+	r := routes.SetupRouter()
+	r.Run(":4592") // Chạy server tại port 4592
 	select {}
 }
 
