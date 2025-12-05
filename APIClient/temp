@@ -1,0 +1,50 @@
+func CallAPI(url string) {
+	fmt.Printf("Bắt đầu gọi API: %s tại %s\n", url, time.Now().Format("15:04:05"))
+
+	resp, err := http.Get(url)
+	if err != nil {
+		fmt.Println("Lỗi khi gọi API:", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	fmt.Printf("Gọi API thành công. Status Code: %d\n", resp.StatusCode)
+}
+
+
+
+/ func main() {
+// 	// Khai báo một biến
+// 	name := "Người dùng GoLang"
+
+// 	// Sử dụng package fmt và time
+// 	fmt.Printf("Xin chào, %s! Hôm nay là: %s\n", name, time.Now().Format("02-01-2006"))
+// 	interval := 5 * time.Second
+
+// 	// 1. Khởi tạo Ticker
+// 	ticker := time.NewTicker(interval)
+// 	// Đảm bảo dừng Ticker khi hàm main kết thúc để giải phóng tài nguyên
+// 	defer ticker.Stop()
+
+// 	fmt.Println("Chương trình bắt đầu chạy với Ticker. Nhấn Ctrl+C để dừng.")
+
+// 	// Vòng lặp chờ tín hiệu từ Ticker
+// 	for {
+// 		// 2. Chờ nhận tín hiệu trên channel 'C' của Ticker
+// 		<-ticker.C
+
+// 		// 3. Khi nhận được tín hiệu (sau mỗi 5 giây), thực hiện tác vụ
+// 		// Thao tác này sẽ cố gắng chạy đúng vào thời điểm Ticker báo hiệu,
+// 		// bất kể tác vụ trước đó chạy nhanh hay chậm.
+// 		//go CallAPI(apiURL) // Sử dụng 'go' để chạy trong một goroutine mới
+// 		post, err := APIClient.CallAPI_Post()
+// 		if err != nil {
+// 			fmt.Printf("[Lỗi] Xảy ra lỗi khi gọi API: %v\n", err)
+// 			continue
+// 		}
+
+// 		// 4. Xử lý kết quả thành công
+// 		fmt.Printf("[Thành công] Nhận được Post ID: %d, Title: %s\n", post.ID, post.Title)
+// 	}
+
+// }
