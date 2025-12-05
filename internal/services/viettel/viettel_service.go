@@ -104,27 +104,3 @@ func ViettelGet(urlendpoint string) ([]byte, error) {
 	return io.ReadAll(resp.Body)
 }
 
-// Gọi POST API Viettel có Bearer token
-func ViettelPost(endpoint string, payload any) ([]byte, error) {
-	token, err := GetViettelAccessToken()
-	if err != nil {
-		return nil, err
-	}
-
-	jsonData, _ := json.Marshal(payload)
-
-	req, err := http.NewRequest("POST", "https://app.vietteldms.com"+endpoint, strings.NewReader(string(jsonData)))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Authorization", "Bearer "+token)
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	return io.ReadAll(resp.Body)
-}
