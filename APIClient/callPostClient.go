@@ -13,7 +13,7 @@ import (
 
 func CallAPI_Post() (*Model.Post, error) {
 	// Dữ liệu giả lập cho API B
-	apiURL := "https://jsonplaceholder.typicode.com/posts/2"
+	apiURL := "https://jsonplaceholder.typicode.com/posts/1"
 
 	// Gọi hàm generics và chỉ định kiểu ResponseB
 	return GenericAPICall[Model.Post](apiURL)
