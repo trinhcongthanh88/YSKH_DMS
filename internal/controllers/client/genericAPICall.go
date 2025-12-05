@@ -1,4 +1,4 @@
-package APIClient
+package client
 
 import (
 	"encoding/json"

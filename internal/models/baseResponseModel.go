@@ -1,4 +1,4 @@
-package Model
+package models
 
 // Pagination đại diện cho cấu trúc "pagination"
 type Pagination struct {

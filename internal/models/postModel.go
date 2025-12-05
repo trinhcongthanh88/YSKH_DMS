@@ -1,4 +1,4 @@
-package Model
+package models
 
 type Post struct {
 	UserId int    `json:"userId"`

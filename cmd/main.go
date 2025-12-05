@@ -1,8 +1,8 @@
 package main
 
 import (
+	client "YSKH_DMS/internal/controllers/client"
 	"fmt"
-	"go-vscode-project/APIClient"
 	"time"
 )
 
@@ -18,7 +18,7 @@ func main() {
 	// 1. Hàm gọi API: client.CallAPI_Post
 	// 2. Hàm xử lý kết quả: PostResultProcessor
 	fmt.Println("Chương trình Gọi API")
-	go APIClient.StartScheduler(interval, APIClient.CallAPI_Post, APIClient.PostResultProcessor)
+	go client.StartScheduler(interval, client.CallAPI_Post, client.PostResultProcessor)
 
 	fmt.Println("Chương trình chính đã khởi động.")
 	select {}

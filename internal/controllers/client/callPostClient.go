@@ -1,8 +1,8 @@
-package APIClient
+package client
 
 import (
+	model "YSKH_DMS/internal/models"
 	"fmt"
-	"go-vscode-project/Model"
 )
 
 // Hàm thực hiện việc gọi API (giữ nguyên)
@@ -11,15 +11,15 @@ import (
 // Lưu ý: Tên hàm bắt đầu bằng chữ cái thường vì nó chỉ cần được dùng trong cùng package (main).
 // Nếu bạn muốn dùng nó từ package khác, bạn phải đặt tên là CallAPI (chữ C viết hoa).
 
-func CallAPI_Post() (*Model.Post, error) {
+func CallAPI_Post() (*model.Post, error) {
 	// Dữ liệu giả lập cho API B
 	apiURL := "https://jsonplaceholder.typicode.com/posts/1"
 
 	// Gọi hàm generics và chỉ định kiểu ResponseB
-	return GenericAPICall[Model.Post](apiURL)
+	return GenericAPICall[model.Post](apiURL)
 }
 
-func PostResultProcessor(post *Model.Post, err error) {
+func PostResultProcessor(post *model.Post, err error) {
 	// 1. Kiểm tra lỗi (Quan trọng nhất)
 	if err != nil {
 		// In lỗi và dừng xử lý
