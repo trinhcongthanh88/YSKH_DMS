@@ -19,7 +19,7 @@ type ViettelTokenResponse struct {
 	TokenType   string `json:"token_type"`
 	ExpiresIn   int    `json:"expires_in"`
 }
-
+r
 // Struct để cache token (thread-safe)
 type tokenCache struct {
 	Token     string
@@ -29,7 +29,7 @@ type tokenCache struct {
 
 var (
 	viettelTokenCache = &tokenCache{}
-	client            = &http.Client{Timeout: 30 * time.Second}
+	client            = &http.Client{Timeout: 3600 * time.Second}
 )
 
 // Lấy token (có cache tự động)
@@ -65,8 +65,8 @@ func GetViettelAccessToken() (string, error) {
 		return "", fmt.Errorf("parse token thất bại: %v", err)
 	}
 
-	// Cache token (hết hạn trước 60 giây để an toàn)
-	expireTime := time.Now().Add(time.Duration(tokenResp.ExpiresIn-60) * time.Second)
+	// Cache token (hết hạn trước 10 phút để an toàn)
+	expireTime := time.Now().Add(time.Duration(tokenResp.ExpiresIn-600) * time.Second)
 	viettelTokenCache.mu.Lock()
 	viettelTokenCache.Token = tokenResp.AccessToken
 	viettelTokenCache.ExpiresAt = expireTime
