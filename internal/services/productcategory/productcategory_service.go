@@ -1,18 +1,18 @@
-package customertype
+package productcategory
 
 import (
 	viettelService "YSKH_DMS/internal/services/viettel"
 	// "fmt"
 	"encoding/json"
 	// "os"
-	cutomertypeModel "YSKH_DMS/internal/models/customertype"
-	// "github.com/davecgh/go-spew/spew"
+	productcategoryModel "YSKH_DMS/internal/models/productcategory"
+	
 	
 )
 
 type ViettelResponse struct {
 	Status StatusInfo                           `json:"status"`
-	Data   []cutomertypeModel.CustomerType     `json:"data"`
+	Data   []productcategoryModel.ProductCategory     `json:"data"`
 	Pagination PagingInfo                           `json:"pagination"`
 }
 
@@ -35,10 +35,9 @@ type PagingInfo struct {
 func SaveBatchDmsViettel() (any, error) {
 
 	queryApi := map[string]any{
-		"status":  "ACT",
 	}
 
-	urlapi := "https://app.vietteldms.com/openapi/v1/GetCustomerTypeList"
+	urlapi := "https://app.vietteldms.com/openapi/v1/GetAllProductCategory"
 	page := 0 
 	size := 20 
 
@@ -52,18 +51,19 @@ func SaveBatchDmsViettel() (any, error) {
 		if err != nil {
 			return nil, err
 		}
-		
+	
 		var result ViettelResponse
 		if err := json.Unmarshal(repData, &result); err != nil {
 			
 			return nil, err
 		}
-		err = cutomertypeModel.SaveBatch(result.Data)
+		
+		err = productcategoryModel.SaveBatch(result.Data)
 		if page >= result.Pagination.TotalPages-1 {
 			break // Dừng khi là trang cuối
 		}
-		
 	
+		
 		
 
 		page++ // Tăng trang

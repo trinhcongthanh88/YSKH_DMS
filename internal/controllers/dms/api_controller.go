@@ -10,6 +10,7 @@ import (
 	_ "time"
 	_ "encoding/json"
 	customertypeService "YSKH_DMS/internal/services/customertype"
+	productcategoryService "YSKH_DMS/internal/services/productcategory"
 	 "github.com/gin-gonic/gin"
 	
 )
@@ -23,9 +24,26 @@ import (
 // 	}
 // 	c.JSON(http.StatusOK, users)
 // }
-func DemoApi(c *gin.Context) {
+func CustomertypeApi(c *gin.Context) {
 
 	numberPage, err := customertypeService.SaveBatchDmsViettel();
+	if err != nil {
+		c.JSON(500, gin.H{
+			"success": false,
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"success": true,
+		"page":    numberPage,
+	})
+
+}
+func ProductcategoryApi(c *gin.Context) {
+
+	numberPage, err := productcategoryService.SaveBatchDmsViettel();
 	if err != nil {
 		c.JSON(500, gin.H{
 			"success": false,

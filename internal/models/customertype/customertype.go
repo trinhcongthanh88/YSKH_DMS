@@ -66,8 +66,8 @@ func prepareUpdateStmt(tx *sql.Tx) (*sql.Stmt, error) {
 			custTypeName = @p3,
 			custTypeStatus =@p4,
 			custTypeUser = @p5,
-			custTypeDate = @p6,
-		WHERE custTypeCode = ? AND groupCode = ?
+			custTypeDate = @p6
+		WHERE custTypeCode = @p7 AND groupCode =  @p8
 	`)
 }
 

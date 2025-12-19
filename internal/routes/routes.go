@@ -7,6 +7,7 @@ import (
 
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
-	r.GET("demo-api", dms.DemoApi)   
+	r.GET("customertype-api", dms.CustomertypeApi)   
+	r.GET("productcategory-api", dms.ProductcategoryApi)   
 	return r
 }
