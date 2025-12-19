@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	// "os"
 	cutomertypeModel "YSKH_DMS/internal/models/customertype"
-
+	// "github.com/davecgh/go-spew/spew"
 	
 )
 
@@ -36,29 +36,40 @@ func SaveBatchDmsViettel() (any, error) {
 
 	queryApi := map[string]any{
 		"status":  "ACT",
-	
 	}
 
 	urlapi := "https://app.vietteldms.com/openapi/v1/GetCustomerTypeList"
+	page := 0 
+	size := 20 
 
-	urlApiBuild, err := viettelService.BuildViettelDistURL(urlapi, queryApi)
-	if err != nil {
-		return nil, err
-	}
+	for {
+		urlApiBuild, err := viettelService.BuildViettelDistURL(urlapi, queryApi,page,size)
+		if err != nil {
+			return nil, err
+		}
 
-	repData, err := viettelService.ViettelGet(urlApiBuild)
-	if err != nil {
-		return nil, err
-	}
-	
-	var result ViettelResponse
-    if err := json.Unmarshal(repData, &result); err != nil {
+		repData, err := viettelService.ViettelGet(urlApiBuild)
+		if err != nil {
+			return nil, err
+		}
 		
-        return nil, err
-    }
+		var result ViettelResponse
+		if err := json.Unmarshal(repData, &result); err != nil {
+			
+			return nil, err
+		}
+		
+		if page >= result.Pagination.TotalPages-1 {
+			break // Dừng khi là trang cuối
+		}
+		
+		err = cutomertypeModel.SaveBatch(result.Data)
+		
+
+		page++ // Tăng trang
+	}
 	
-	err = cutomertypeModel.SaveBatch(result.Data)
     
-    return result, nil
+    return page, nil
 
 }

@@ -11,6 +11,8 @@ import (
 	"time"
    _ "strings"
 	_ "YSKH_DMS/internal/models" // nếu cần lưu log, user, v.v.
+	// "github.com/davecgh/go-spew/spew"
+	
 )
 
 // Struct nhận token từ Viettel
@@ -73,7 +75,7 @@ func GetViettelAccessToken() (string, error) {
 
 	return tokenResp.AccessToken, nil
 }
-func BuildViettelDistURL(urlApi string,queryApi any) (string, error) {
+func BuildViettelDistURL(urlApi string,queryApi any,page int,size int) (string, error) {
 		queryJSON, err := json.Marshal(queryApi)
 		if err != nil {
 			return "", err // hoặc xử lý lỗi phù hợp
@@ -88,10 +90,13 @@ func BuildViettelDistURL(urlApi string,queryApi any) (string, error) {
 		}
 
 		queryParams := baseURL.Query()
-		queryParams.Add("query", queryStr) // Bây giờ là string, hợp lệ
+		queryParams.Add("query", queryStr) 
+		queryParams.Add("page",fmt.Sprintf("%d", page)) 
+		queryParams.Add("size",fmt.Sprintf("%d",size )) 
 		baseURL.RawQuery = queryParams.Encode()
 
 		fullURL := baseURL.String()
+		
 		return fullURL, nil
 	
 }

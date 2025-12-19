@@ -25,7 +25,7 @@ import (
 // }
 func DemoApi(c *gin.Context) {
 
-	repData, err := customertypeService.SaveBatchDmsViettel();
+	numberPage, err := customertypeService.SaveBatchDmsViettel();
 	if err != nil {
 		c.JSON(500, gin.H{
 			"success": false,
@@ -36,7 +36,7 @@ func DemoApi(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"success": true,
-		"data":    repData,
+		"page":    numberPage,
 	})
 
 }
