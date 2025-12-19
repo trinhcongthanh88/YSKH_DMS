@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"sync"
 	"time"
-   "strings"
+   _ "strings"
 	_ "YSKH_DMS/internal/models" // nếu cần lưu log, user, v.v.
 )
 
@@ -19,7 +19,6 @@ type ViettelTokenResponse struct {
 	TokenType   string `json:"token_type"`
 	ExpiresIn   int    `json:"expires_in"`
 }
-r
 // Struct để cache token (thread-safe)
 type tokenCache struct {
 	Token     string
@@ -75,12 +74,28 @@ func GetViettelAccessToken() (string, error) {
 	return tokenResp.AccessToken, nil
 }
 func BuildViettelDistURL(urlApi string,queryApi any) (string, error) {
-	queryJSON, _ := json.Marshal(queryApi)
+		queryJSON, err := json.Marshal(queryApi)
+		if err != nil {
+			return "", err // hoặc xử lý lỗi phù hợp
+		}
 
-	params := url.Values{}
-	params.Add("query", string(queryJSON))
-	return urlApi+ "?" + params.Encode(), nil
+		// Chuyển []byte thành string
+		queryStr := string(queryJSON)
+
+		baseURL, err := url.Parse(urlApi)
+		if err != nil {
+			return "", err
+		}
+
+		queryParams := baseURL.Query()
+		queryParams.Add("query", queryStr) // Bây giờ là string, hợp lệ
+		baseURL.RawQuery = queryParams.Encode()
+
+		fullURL := baseURL.String()
+		return fullURL, nil
+	
 }
+
 // Gọi GET API Viettel có Bearer token
 func ViettelGet(urlendpoint string) ([]byte, error) {
 	token, err := GetViettelAccessToken()
@@ -100,7 +115,6 @@ func ViettelGet(urlendpoint string) ([]byte, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-
 	return io.ReadAll(resp.Body)
 }
 

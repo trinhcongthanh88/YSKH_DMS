@@ -8,11 +8,10 @@ import (
 	_ "net/url"    
 	_ "strings"   
 	_ "time"
-	"encoding/json"
-	vtservice "YSKH_DMS/internal/services/viettel"
-	
+	_ "encoding/json"
+	customertypeService "YSKH_DMS/internal/services/customertype"
 	 "github.com/gin-gonic/gin"
-	_ "YSKH_DMS/internal/models"
+	
 )
 
 // // GET /users: Lấy danh sách users từ DB
@@ -25,19 +24,19 @@ import (
 // 	c.JSON(http.StatusOK, users)
 // }
 func DemoApi(c *gin.Context) {
-	queryApi := map[string]any{
-			"status":     []string{"ACT", "PEN"},
-			"createDate": "2025-05-16",
-		}
-	urlapi := "https://app.vietteldms.com/openapi/v1/GetListDist"
-	urlApiBuild, _ :=  vtservice.BuildViettelDistURL(urlapi,queryApi)
-	repData, _ :=  vtservice.ViettelGet(urlApiBuild)
-	// c.JSON(200, gin.H{"data": string(repData)})
-	var result any
-	json.Unmarshal(repData, &result)
+
+	repData, err := customertypeService.SaveBatchDmsViettel();
+	if err != nil {
+		c.JSON(500, gin.H{
+			"success": false,
+			"error":   err.Error(),
+		})
+		return
+	}
+
 	c.JSON(200, gin.H{
 		"success": true,
-		"data":    result, // ← object hoặc array thật
+		"data":    repData,
 	})
 
 }

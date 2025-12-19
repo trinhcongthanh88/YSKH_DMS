@@ -4,10 +4,6 @@ import (
 	"database/sql"
 	// "fmt"
 	"log"
-
-	
-
-	
 	_ "github.com/denisenkom/go-mssqldb" // MSSQL driver
 )
 
@@ -29,4 +25,6 @@ func InitDB() {
 		log.Fatal("Error pinging DB: ", err.Error())
 	}
 	log.Println("Connected to SQL Server!")
+	
+	
 }
