@@ -1,0 +1,79 @@
+package product
+
+import (
+	viettelService "YSKH_DMS/internal/services/viettel"
+	// "fmt"
+	"encoding/json"
+	// "os"
+	productModel "YSKH_DMS/internal/models/product"
+	// "github.com/davecgh/go-spew/spew"
+	
+)
+
+type ViettelResponse struct {
+	Status StatusInfo                 `json:"status"`
+	Data   []productModel.Product     `json:"data"`
+	Pagination PagingInfo             `json:"pagination"`
+}
+
+type StatusInfo struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+}
+
+type PagingInfo struct {
+    Last             bool `json:"last"`
+    First            bool `json:"first"`
+    Empty            bool `json:"empty"`
+    NumberOfElements int  `json:"numberOfElements"`
+    TotalElements    int  `json:"totalElements"`
+    TotalPages       int  `json:"totalPages"`
+    Size             int  `json:"size"`
+    Number           int  `json:"number"`
+}
+
+func SaveBatchDmsViettel() (any, error) {
+
+	queryApi := map[string]any{
+		// "proCode":"",
+		// "proName":"",
+		// "proCategoryCode":"",
+		"proStatus":"ACT",
+	}
+
+	urlapi := "https://app.vietteldms.com/openapi/v1/GetListProduct"
+	page := 0 
+	size := 100 
+
+	for {
+		urlApiBuild, err := viettelService.BuildViettelDistURL(urlapi, queryApi,page,size)
+		if err != nil {
+			return nil, err
+		}
+
+		repData, err := viettelService.ViettelGet(urlApiBuild)
+		if err != nil {
+			return nil, err
+		}
+	
+		var result ViettelResponse
+		if err := json.Unmarshal(repData, &result); err != nil {
+			
+			return nil, err
+		}
+	
+		err = productModel.SaveBatch(result.Data)
+		if page >= result.Pagination.TotalPages-1 {
+			break // Dừng khi là trang cuối
+		}
+	
+		
+		
+
+		page++ // Tăng trang
+	}
+	
+    
+    return page, nil
+
+}
