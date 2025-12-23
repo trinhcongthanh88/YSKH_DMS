@@ -1,4 +1,4 @@
-package product
+package pricelist
 
 import (
 	"database/sql"
@@ -19,7 +19,7 @@ import (
 // ENTITY - MODEL PRODUCT
 // =====================
 
-type Product struct {
+type PriceList struct {
 	// productId không lấy từ JSON, tự động gán bằng proCode
 	ProductId string `json:"-"`
 

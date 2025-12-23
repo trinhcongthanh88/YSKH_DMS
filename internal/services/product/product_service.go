@@ -62,6 +62,7 @@ func SaveBatchDmsViettel() (any, error) {
 			return nil, err
 		}
 	
+		
 		err = productModel.SaveBatch(result.Data)
 		if page >= result.Pagination.TotalPages-1 {
 			break // Dừng khi là trang cuối
