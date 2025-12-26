@@ -12,7 +12,8 @@ import (
 	customertypeService "YSKH_DMS/internal/services/customertype"
 	productcategoryService "YSKH_DMS/internal/services/productcategory"
 	productService "YSKH_DMS/internal/services/product"
-	 "github.com/gin-gonic/gin"
+	pricelistService "YSKH_DMS/internal/services/pricelist"
+	"github.com/gin-gonic/gin"
 	
 )
 
@@ -62,6 +63,23 @@ func ProductcategoryApi(c *gin.Context) {
 func ProductApi(c *gin.Context) {
 
 	numberPage, err := productService.SaveBatchDmsViettel();
+	if err != nil {
+		c.JSON(500, gin.H{
+			"success": false,
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"success": true,
+		"page":    numberPage,
+	})
+
+}
+func PriceListApi(c *gin.Context) {
+
+	numberPage, err := pricelistService.SaveBatchDmsViettel();
 	if err != nil {
 		c.JSON(500, gin.H{
 			"success": false,

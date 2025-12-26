@@ -1,4 +1,4 @@
-package pricelist
+package pricedistunitapproved
 
 import (
 	"database/sql"
@@ -8,30 +8,22 @@ import (
 	"time"
 
 	db "YSKH_DMS/database"
-	priceEntryModel "YSKH_DMS/internal/models/priceentry"
-	priceCustApprovedModel "YSKH_DMS/internal/models/pricecustapproved"
-	priceDistUnitApprovedModel "YSKH_DMS/internal/models/pricedistunitapproved"
+
 
 	// "github.com/davecgh/go-spew/spew"
 )
 
 // =====================
-// ENTITY - MODEL PriceList
+// ENTITY - MODEL PRICEDISTUNITAPPROVED
 // =====================
 
-type PriceList struct {
-
-
-	// Các field từ API/JSON
+type PriceDistUnitApproved struct {
+	PriceEntryId 		   int 		  	   `json:"-"`
 	PriListCode            string      	   `json:"priListCode"`
-	PriListName            string          `json:"priListName"`
-	PriListStatus          string          `json:"priListStatus"`
-	PriListType            string          `json:"priListType"`
-	PriListFromDate        string          `json:"priListFromDate"`
-	PriListToDate          string          `json:"priListToDate"`
-	PriceEntry           []priceEntryModel.PriceEntry    `json:"priceEntry,omitempty"`
-	PriCustApproved    []priceCustApprovedModel.PriceCustApproved    `json:"priCustApproved,omitempty"`
-	PriDistUnitApproved	[]priceDistUnitApprovedModel.PriceDistUnitApproved    `json:"priDistUnitApproved,omitempty"`
+	DistUnitCode           string          `json:"distUnitCode"`
+    DistUnitName           string          `json:"distUnitName"`
+	FromDate		   	   string 		   `json:"fromDate"`
+	ToDate		      	   string 		   `json:"toDate"`
 }
 
 
@@ -39,9 +31,7 @@ type PriceList struct {
 // =====================
 // HELPER: FORMAT DATE CHO MSSQL
 // =====================
-
 func formatDateForMSSQL(dateStr string) (any, error) {
-
 	dateStr = strings.TrimSpace(dateStr)
 	if dateStr == "" ||
 		strings.EqualFold(dateStr, "null") ||
@@ -82,34 +72,33 @@ func formatDateForMSSQL(dateStr string) (any, error) {
 	// Always return in the safe MSSQL datetime format (with time, zeroed if not provided)
 	return t.Format("2006-01-02"), nil
 }
-
 // =====================
 // PREPARE STATEMENTS
 // =====================
 
 func prepareCheckStmt(tx *sql.Tx) (*sql.Stmt, error) {
-	return tx.Prepare(`SELECT COUNT(1) FROM PriceList WHERE priListCode = @p1`)
+	return tx.Prepare(`SELECT COUNT(1) FROM PriceDistUnitApproved WHERE priListCode = @p1 AND distUnitCode = @p2`)
 }
 
 func prepareInsertStmt(tx *sql.Tx) (*sql.Stmt, error) {
 	return tx.Prepare(`
-		INSERT INTO PriceList (
-			priListCode, priListName, priListStatus, priListType, priListFromDate, priListToDate
+		INSERT INTO PriceDistUnitApproved (
+			priListCode, distUnitCode, distUnitName, fromDate, toDate
 		) VALUES (
-			@p1, @p2, @p3, @p4, @p5, @p6
+			@p1, @p2, @p3, @p4, @p5
 		)
 	`)
 }
 
 func prepareUpdateStmt(tx *sql.Tx) (*sql.Stmt, error) {
 	return tx.Prepare(`
-		UPDATE PriceList SET
-			priListName = @p2,
-			priListStatus = @p3,
-			priListType = @p4,
-			priListFromDate = @p5,
-			priListToDate = @p6
-		WHERE priListCode = @p1
+		UPDATE PriceDistUnitApproved SET
+			priListCode = @p1,
+			distUnitCode = @p2,
+			distUnitName = @p3,		
+			fromDate = @p4,
+			toDate = @p5
+		WHERE   priListCode = @p1 AND distUnitCode = @p2
 	`)
 }
 
@@ -117,52 +106,44 @@ func prepareUpdateStmt(tx *sql.Tx) (*sql.Stmt, error) {
 // EXEC: INSERT & UPDATE
 // =====================
 
-func execInsert(stmt *sql.Stmt, rec PriceList) error {
-	
-	fixedFromDate, err := formatDateForMSSQL(rec.PriListFromDate)
-	
-	if err != nil {
-
-		return err
-	}
-	
-	fixedToDate, err1 := formatDateForMSSQL(rec.PriListToDate)
-	if err != nil {
-
-		return err1
-	}
-		
-	_, err = stmt.Exec(
-		rec.PriListCode,
-		rec.PriListName,
-		rec.PriListStatus,		
-		rec.PriListType,
-		fixedFromDate,
-		fixedToDate,
-	)
-	
-	return err
-}
-
-func execUpdate(stmt *sql.Stmt, rec PriceList) error {
-	fixedFromDate, err := formatDateForMSSQL(rec.PriListFromDate)
+func execInsert(stmt *sql.Stmt, rec PriceDistUnitApproved) error {
+	fixedFromDate, err := formatDateForMSSQL(rec.FromDate)
+	fixedToDate, err1 := formatDateForMSSQL(rec.ToDate)
 	if err != nil {
 		return err
 	}
-	fixedToDate, err1 := formatDateForMSSQL(rec.PriListToDate)
+	
 	if err1 != nil {
 		return err1
 	}
-	
+
 	_, err = stmt.Exec(
-		rec.PriListCode,
-		rec.PriListName,
-		rec.PriListStatus,		
-		rec.PriListType,
+		rec.PriListCode,				  
+		rec.DistUnitCode,                   
+		rec.DistUnitName,                 
 		fixedFromDate,
 		fixedToDate,
 	)
+	return err
+}
 
+func execUpdate(stmt *sql.Stmt, rec PriceDistUnitApproved) error {
+	fixedFromDate, err := formatDateForMSSQL(rec.FromDate)
+	fixedToDate, err1 := formatDateForMSSQL(rec.ToDate)
+	if err != nil {
+		return err
+	}
+	if err1 != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(
+		rec.PriListCode,				  
+		rec.DistUnitCode,                   
+		rec.DistUnitName,                 
+		fixedFromDate,
+		fixedToDate,
+	)
 	return err
 }
 
@@ -170,7 +151,7 @@ func execUpdate(stmt *sql.Stmt, rec PriceList) error {
 // SAVE BATCH - UPSERT
 // =====================
 
-func SaveBatch(records []PriceList) error {
+func SaveBatch(records []PriceDistUnitApproved,priListCode string) error {
 	if len(records) == 0 {
 		return nil
 	}
@@ -206,33 +187,28 @@ func SaveBatch(records []PriceList) error {
 
 	// Process each record
 	for _, rec := range records {
-		
+
+		rec.PriListCode = priListCode ;
 		
 		var count int
-		if err = checkStmt.QueryRow(rec.PriListCode).Scan(&count); err != nil {
+		if err = checkStmt.QueryRow(rec.PriListCode, rec.DistUnitCode).Scan(&count); err != nil {
+			
 			return err
 		}
-		
+	
 		if count > 0 {
 			if err = execUpdate(updateStmt, rec); err != nil {
-				return fmt.Errorf("update failed for %s: %w", rec.PriListCode, err)
+				
+				return fmt.Errorf("update price entry failed for %s: %w", rec.DistUnitCode, err)
 			}
-			
 		} else {
-		
 			if err = execInsert(insertStmt, rec); err != nil {
-				return fmt.Errorf("insert failed for %s: %w", rec.PriListCode, err)
+				return fmt.Errorf("insert price entry failed for %s: %w", rec.DistUnitCode, err)
 			}
 		}
-		if len(rec.PriceEntry) > 0{
-			priceEntryModel.SaveBatch(rec.PriceEntry, rec.PriListCode) ;
-		}
-		if len(rec.PriCustApproved) > 0{
-			priceCustApprovedModel.SaveBatch(rec.PriCustApproved,rec.PriListCode) ;
-		}
-		if len(rec.PriDistUnitApproved) > 0{
-			priceDistUnitApprovedModel.SaveBatch(rec.PriDistUnitApproved,rec.PriListCode) ;	
-		}
+
+		
+		
 	}
 
 	return tx.Commit()

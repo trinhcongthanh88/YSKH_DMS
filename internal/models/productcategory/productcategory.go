@@ -25,9 +25,13 @@ type ProductCategory struct {
     ProCategoryCreateName string `json:"proCategoryCreateName"`
  
 }
-func formatDateForMSSQL(dateStr string) (string, error) {
+func formatDateForMSSQL(dateStr string) (any, error) {
     dateStr = strings.TrimSpace(dateStr)
-
+    if dateStr == "" || 
+	   strings.EqualFold(dateStr, "null") || 
+	   strings.EqualFold(dateStr, "nil") {
+		return nil, nil // No error, just no value
+	}
     var t time.Time
     var err error
 

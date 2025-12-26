@@ -62,10 +62,14 @@ type ProCategoryItem struct {
 // HELPER: FORMAT DATE CHO MSSQL
 // =====================
 
-func formatDateForMSSQL(dateStr string) (string, error) {
+func formatDateForMSSQL(dateStr string) (any, error) {
 	dateStr = strings.TrimSpace(dateStr)
-	if dateStr == "" {
-		return "", errors.New("date string is empty")
+		if dateStr == "" ||
+		strings.EqualFold(dateStr, "null") ||
+		strings.EqualFold(dateStr, "nil") ||
+		strings.EqualFold(dateStr, "na") ||
+		strings.EqualFold(dateStr, "<null>") {
+		return nil, nil // Không lỗi, chỉ là không có giá trị
 	}
 
 	var t time.Time
