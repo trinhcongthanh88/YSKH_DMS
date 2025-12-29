@@ -6,14 +6,12 @@ import (
 	"encoding/json"
 	// "os"
 	productcategoryModel "YSKH_DMS/internal/models/productcategory"
-	
-	
 )
 
 type ViettelResponse struct {
-	Status StatusInfo                           `json:"status"`
-	Data   []productcategoryModel.ProductCategory     `json:"data"`
-	Pagination PagingInfo                           `json:"pagination"`
+	Status     StatusInfo                             `json:"status"`
+	Data       []productcategoryModel.ProductCategory `json:"data"`
+	Pagination PagingInfo                             `json:"pagination"`
 }
 
 type StatusInfo struct {
@@ -22,27 +20,26 @@ type StatusInfo struct {
 }
 
 type PagingInfo struct {
-    Last             bool `json:"last"`
-    First            bool `json:"first"`
-    Empty            bool `json:"empty"`
-    NumberOfElements int  `json:"numberOfElements"`
-    TotalElements    int  `json:"totalElements"`
-    TotalPages       int  `json:"totalPages"`
-    Size             int  `json:"size"`
-    Number           int  `json:"number"`
+	Last             bool `json:"last"`
+	First            bool `json:"first"`
+	Empty            bool `json:"empty"`
+	NumberOfElements int  `json:"numberOfElements"`
+	TotalElements    int  `json:"totalElements"`
+	TotalPages       int  `json:"totalPages"`
+	Size             int  `json:"size"`
+	Number           int  `json:"number"`
 }
 
 func SaveBatchDmsViettel() (any, error) {
 
-	queryApi := map[string]any{
-	}
+	queryApi := map[string]any{}
 
 	urlapi := "https://app.vietteldms.com/openapi/v1/GetAllProductCategory"
-	page := 0 
-	size := 20 
+	page := 0
+	size := 20
 
 	for {
-		urlApiBuild, err := viettelService.BuildViettelDistURL(urlapi, queryApi,page,size)
+		urlApiBuild, err := viettelService.BuildViettelDistURL(urlapi, queryApi, page, size)
 		if err != nil {
 			return nil, err
 		}
@@ -51,25 +48,21 @@ func SaveBatchDmsViettel() (any, error) {
 		if err != nil {
 			return nil, err
 		}
-	
+
 		var result ViettelResponse
 		if err := json.Unmarshal(repData, &result); err != nil {
-			
+
 			return nil, err
 		}
-		
+
 		err = productcategoryModel.SaveBatch(result.Data)
 		if page >= result.Pagination.TotalPages-1 {
 			break // Dừng khi là trang cuối
 		}
-	
-		
-		
 
 		page++ // Tăng trang
 	}
-	
-    
-    return page, nil
+
+	return page, nil
 
 }
