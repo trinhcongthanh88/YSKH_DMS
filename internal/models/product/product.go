@@ -102,7 +102,7 @@ func prepareCheckStmt(tx *sql.Tx) (*sql.Stmt, error) {
 func prepareInsertStmt(tx *sql.Tx) (*sql.Stmt, error) {
 	return tx.Prepare(`
 		INSERT INTO Product (
-			ProductId, proCode, proName, proType, proStatus, proIsSale, proIsVisible,
+			productId, proCode, proName, proType, proStatus, proIsSale, proIsVisible,
 			proIsVar, proManagerLot, proManagerBarcode, proTaxGroup, taxRate,
 			priceSellDefaultNotVat, priceSelDefaultVat, proCategoryCode,
 			proCategoryName, proCategoryParentCode, proCreateDate, proCreateName,proUomId,proTaxId

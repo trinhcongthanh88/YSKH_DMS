@@ -13,6 +13,7 @@ import (
 	productcategoryService "YSKH_DMS/internal/services/productcategory"
 	productService "YSKH_DMS/internal/services/product"
 	pricelistService "YSKH_DMS/internal/services/pricelist"
+	organizationService "YSKH_DMS/internal/services/organization"
 	"github.com/gin-gonic/gin"
 	
 )
@@ -80,6 +81,40 @@ func ProductApi(c *gin.Context) {
 func PriceListApi(c *gin.Context) {
 
 	numberPage, err := pricelistService.SaveBatchDmsViettel();
+	if err != nil {
+		c.JSON(500, gin.H{
+			"success": false,
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"success": true,
+		"page":    numberPage,
+	})
+
+}
+func OrganizationListApiWeb(c *gin.Context) {
+
+	numberPage, err := organizationService.SaveBatchDmsViettelWeb();
+	if err != nil {
+		c.JSON(500, gin.H{
+			"success": false,
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"success": true,
+		"page":    numberPage,
+	})
+
+}
+func OrganizationListApi(c *gin.Context) {
+
+	numberPage, err := organizationService.SaveItemDmsViettel();
 	if err != nil {
 		c.JSON(500, gin.H{
 			"success": false,

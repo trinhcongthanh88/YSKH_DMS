@@ -100,6 +100,41 @@ func BuildViettelDistURL(urlApi string,queryApi any,page int,size int) (string, 
 		return fullURL, nil
 	
 }
+func BuildViettelDistURLWeb(urlApi string,page int,size int) (string, error) {
+		
+
+		baseURL, err := url.Parse(urlApi)
+		if err != nil {
+			return "", err
+		}
+
+		queryParams := baseURL.Query()
+		queryParams.Add("parentId", "7855780a-296f-4041-82cf-cc4031e1f6b8") 
+		queryParams.Add("page",fmt.Sprintf("%d", page)) 
+		queryParams.Add("size",fmt.Sprintf("%d",size )) 
+		baseURL.RawQuery = queryParams.Encode()
+
+		fullURL := baseURL.String()
+		
+		return fullURL, nil
+	
+}
+func ViettelGetApiweb(urlendpoint string) ([]byte, error) {
+	req, err := http.NewRequest("GET",urlendpoint, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Authorization", "Bearer "+"c05d2917-7f75-4dec-8210-850f7d71d847")
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	return io.ReadAll(resp.Body)
+}
 
 // Gọi GET API Viettel có Bearer token
 func ViettelGet(urlendpoint string) ([]byte, error) {
